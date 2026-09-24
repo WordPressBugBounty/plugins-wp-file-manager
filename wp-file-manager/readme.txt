@@ -142,15 +142,32 @@ Yes, You can archive any files and folders as zip then simple download it. Pleas
 
 
 == Changelog ==
-8.0.5 (22 Sep, 2026)
+= 8.0.6 (23 Sep, 2026) =
+
+* Security fixes based on the latest automated security review.
+* Fixed Multisite filesystem access to ensure site Administrators cannot access installation-wide files outside their authorized site scope.
+* Added OAuth state validation for Google Drive authentication callbacks to prevent unauthorized account/session association.
+* Added strict origin validation for elFinder postMessage events to prevent cross-origin message spoofing.
+* Fixed Dropbox OAuth state validation to ensure callbacks are bound to the initiating authentication session.
+* Enabled HTTPS certificate verification for URL uploads.
+* Added OAuth state validation and session binding for OneDrive authentication callbacks.
+* Hardened HTML file previews to prevent active HTML/JavaScript content from executing in the WordPress origin.
+* Fixed unsafe HTML attribute handling in the Online Convert integration.
+* Hardened URL upload validation against DNS rebinding and SSRF bypasses.
+
+8.0.5 (14 Sep, 2026)
 
 Fixed CVE-2026-19708 backup exposure by requiring backup archives to be stored outside the public web root, failing closed when secure private storage is unavailable, and migrating or removing legacy public backup archives from wp-content/uploads.
 Fixed the same-origin postMessage bypass in elFinder.
 Fixed the DOM-based XSS in the elFinder playsound handler.
 Notes that the combination could lead to administrator-session JavaScript execution and potentially remote code execution.
+
+= 8.0.5 (3rd Sep, 2026) =
 * Security fix: Fixed a same-origin postMessage bypass in the bundled elFinder file browser (lib/js/elFinder.js and lib/js/elfinder.min.js). The origin check previously accepted any sender whose origin was a leading string-prefix of the site's own address (e.g. https://example.co was wrongly accepted for https://example.com), instead of requiring an exact match. This allowed a malicious page to send forged messages into the File Manager admin screen.
 * Security fix: Fixed a DOM-based XSS in the elFinder "playsound" handler, where a file name value taken from the postMessage payload was concatenated directly into an HTML string and inserted via .html(), allowing injected markup (e.g. an <img onerror>) to run arbitrary JavaScript in the administrator's session. The file name is now validated against a strict pattern and the audio element is built safely via the DOM API.
 * Combined, the two issues above could allow an attacker-controlled web page to run JavaScript in a logged-in administrator's browser and use that access to write and execute a PHP file on the server (remote code execution) with no interaction beyond the admin opening a link. Credit: Mutantgun, reported via WPScan / Jetpack / Automattic.
+
+= 8.0.5 (24th Aug, 2026) =
 * Security fix (CVE-2026-19708): Secured backup storage, scoped multisite exports to the current site, and made backup creation fail closed when safe storage is unavailable.
 * Security fix: Restored elFinder filename validation and hardened hidden-folder path matching.
 * Security fix: Ignored invalid same-origin postMessage events and added capability/nonce checks to the help-notice AJAX action.

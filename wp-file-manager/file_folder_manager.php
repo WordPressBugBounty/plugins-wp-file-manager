@@ -4,7 +4,7 @@
   Plugin URI: https://filemanagerpro.io/
   Description: Manage your WP files.
   Author: mndpsingh287
-  Version: 8.0.5
+  Version: 8.0.6
   Author URI: https://profiles.wordpress.org/mndpsingh287
   License: GPLv2
  **/
@@ -37,7 +37,7 @@ if (!class_exists('mk_file_folder_manager')):
     class mk_file_folder_manager
     {
         protected $SERVER = 'https://filemanagerpro.io/api/plugindata/api.php';
-        var $ver = '8.0.5';
+        var $ver = '8.0.6';
         /* Auto Load Hooks */
         public function __construct()
         {
@@ -1375,7 +1375,19 @@ if (!class_exists('mk_file_folder_manager')):
                                    'locked' => false,
                                 );
             $nonce = sanitize_text_field($_REQUEST['_wpnonce']);
-            if ( ! current_user_can('manage_options') ) {
+            /*
+             * This handler mounts ABSPATH, i.e. the entire installation's
+             * filesystem, not a per-site directory. On Multisite, a plain
+             * site Administrator has manage_options for their own site but
+             * is not a network-level authority, so manage_options alone is
+             * not a sufficient gate here: it would let any site admin reach
+             * files shared across the whole network. Require manage_network
+             * on Multisite; manage_options remains sufficient on a standard
+             * single-site install, where an Administrator already has
+             * equivalent (plugin-installation) authority.
+             */
+            $mk_fm_required_cap = is_multisite() ? 'manage_network' : 'manage_options';
+            if ( ! current_user_can( $mk_fm_required_cap ) ) {
                 status_header(403);
                 echo json_encode([
                     'error' => 'Access denied'

@@ -2736,7 +2736,8 @@ class elFinder
         }
         curl_setopt($ch, CURLOPT_LOW_SPEED_LIMIT, 1);
         curl_setopt($ch, CURLOPT_LOW_SPEED_TIME, $timeout);
-        curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
+        curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, true);
+        curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, 2);
         curl_setopt($ch, CURLOPT_FOLLOWLOCATION, false);
         curl_setopt($ch, CURLOPT_USERAGENT, $ua);
         curl_setopt($ch, CURLOPT_RESOLVE, array($info['host'] . ':' . $info['port'] . ':' . $info['ip']));
@@ -2810,7 +2811,7 @@ class elFinder
             $errno = 0;
             $errstr = "";
             $fp = fsockopen(
-                $ssl . $arr['host'],
+                $ssl . $arr['ip'],
                 $arr['port'],
                 $errno, $errstr, $connect_timeout);
             if ($fp) break;
